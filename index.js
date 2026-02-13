@@ -72,7 +72,7 @@ function render(data) {
 
 
         if (interval_label = '曜日') {
-            weekly_label = (flow.recurrence.schedule).hasOwnProperty('weekDays') ? flow.recurrence.schedule.weekDays : [];
+            weekly_label = flow?.recurrence?.schedule?.hasOwnProperty('weekDays') ? flow.recurrence.schedule.weekDays : [];
         }
 
     } else {
@@ -80,8 +80,8 @@ function render(data) {
     }
 
 
-    let time = (flow.recurrence.schedule).hasOwnProperty('hours') ? flow.recurrence.schedule.hours : 0;
-    let min = (flow.recurrence.schedule).hasOwnProperty('minutes') ? flow.recurrence.schedule.minutes : 0;
+    let time = flow?.recurrence?.schedule?.hasOwnProperty('hours') ? flow.recurrence.schedule.hours : 0;
+    let min = flow?.recurrence?.schedule?.hasOwnProperty('minutes') ? flow.recurrence.schedule.minutes : 0;
     
 
     tr.innerHTML = `
