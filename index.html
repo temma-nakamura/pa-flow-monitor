@@ -3,13 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Flow Monitor</title>
-
+  <title>TEIMO Flow Monitor</title>
   <link rel="stylesheet" href="index.css">
+  <script src="index.js"></script>
 </head>
 <body>
-
   <header class="header">
     <div class="header-left">
       <h1>Flow Monitor</h1>
@@ -20,12 +18,9 @@
       <span id="updatedAt">--</span>
     </div>
   </header>
-
-
   <main class="container">
-
+    <button onclick="reload_data();">更新</button>
     <div class="card">
-
       <table>
         <thead>
           <tr>
@@ -36,16 +31,12 @@
             <th>Result</th>
           </tr>
         </thead>
-
         <tbody id="flowList">
           <!-- JS生成 -->
         </tbody>
       </table>
-
     </div>
-
   </main>
-
   <script src="index.js"></script>
 </body>
 </html>
