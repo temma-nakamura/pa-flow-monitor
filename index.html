@@ -1,39 +1,51 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power Automate 稼働状況</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="index.css">
+  <title>Flow Monitor</title>
+
+  <link rel="stylesheet" href="index.css">
 </head>
 <body>
 
-<header>
-    <h1>Power Automate 稼働状況</h1>
-    <p id="updatedAt">最終更新：--</p>
-</header>
+  <header class="header">
+    <div class="header-left">
+      <h1>Flow Monitor</h1>
+      <span class="subtitle">Power Automate Status</span>
+    </div>
 
-<main>
+    <div class="header-right">
+      <span id="updatedAt">--</span>
+    </div>
+  </header>
 
-    <table>
+
+  <main class="container">
+
+    <div class="card">
+
+      <table>
         <thead>
-            <tr>
-                <th>フロー名</th>
-                <th>状態</th>
-                <th>最終実行日時</th>
-                <th>実行時間</th>
-                <th>結果</th>
-            </tr>
+          <tr>
+            <th>Flow</th>
+            <th>Status</th>
+            <th>Last Run</th>
+            <th>Duration</th>
+            <th>Result</th>
+          </tr>
         </thead>
 
         <tbody id="flowList">
-            <!-- JSで生成 -->
+          <!-- JS生成 -->
         </tbody>
-    </table>
+      </table>
 
-</main>
+    </div>
 
-<script src="index.js"></script>
+  </main>
+
+  <script src="index.js"></script>
 </body>
 </html>
