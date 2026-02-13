@@ -50,39 +50,38 @@ function render(data) {
 
     if (flow.recurrence !== null) {
 
-      switch (flow.recurrence.frequency?.value) {
+        switch (flow.recurrence.frequency?.value) {
 
-          case "Week":
-              interval_label = '曜日';
-              break;
+            case "Week":
+                interval_label = '曜日';
+                break;
 
-          case "Day":
-              interval_label = '日';
-              break;
+            case "Day":
+                interval_label = '日';
+                break;
 
-          case "Month":
-              interval_label = (flow.recurrence.interval + 'ヵ月');
-              break;
-        
-          default:
-              interval_label = '曜日';
-              break;
+            case "Month":
+                interval_label = (flow.recurrence.interval + 'ヵ月');
+                break;
+          
+            default:
+                interval_label = '曜日';
+                break;
 
-      }
+        }
 
 
-      if (interval_label = '曜日') {
-          weekly_label = ('weekDays' in flow.recurrence.schedule) ? flow.recurrence.schedule.weekDays : [];
-      }
-
+        if (interval_label = '曜日') {
+            weekly_label = (flow.recurrence.schedule).hasOwnProperty('weekDays') ? flow.recurrence.schedule.weekDays : [];
+        }
 
     } else {
         interval_label = '-';
     }
 
 
-    let time = ('hours' in flow.recurrence.schedule) ? flow.recurrence.schedule.hours : 0;
-    let min = ('minutes' in flow.recurrence.schedule) ? flow.recurrence.schedule.minutes : 0;
+    let time = (flow.recurrence.schedule).hasOwnProperty('hours') ? flow.recurrence.schedule.hours : 0;
+    let min = (flow.recurrence.schedule).hasOwnProperty('minutes') ? flow.recurrence.schedule.minutes : 0;
     
 
     tr.innerHTML = `
