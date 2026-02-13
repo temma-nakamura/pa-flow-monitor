@@ -56,6 +56,10 @@ function render(data) {
               interval_label = '曜日';
               break;
 
+          case "Day":
+              interval_label = '日';
+              break;
+
           case "Month":
               interval_label = (flow.recurrence.interval + 'ヵ月');
               break;
@@ -77,8 +81,8 @@ function render(data) {
     }
 
 
-    let time = ('hours' in flow) ? flow.hours : 0;
-    let min = ('minutes' in flow) ? flow.minutes : 0;
+    let time = ('hours' in flow) ? flow.recurrence.schedule.hours : 0;
+    let min = ('minutes' in flow) ? flow.recurrence.schedule.minutes : 0;
     
 
     tr.innerHTML = `
