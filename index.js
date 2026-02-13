@@ -2,127 +2,112 @@ const DATA_URL = "./data/status.json";
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    loadFlowStatus();
+  loadFlowStatus();
 });
 
 
 async function loadFlowStatus() {
 
-    try {
+  try {
 
-        const response = await fetch(DATA_URL);
+    const res = await fetch(DATA_URL);
 
-        if (!response.ok) {
-            throw new Error("データ取得失敗");
-        }
+    if (!res.ok) throw new Error("Load failed");
 
-        const data = await response.json();
+    const data = await res.json();
 
-        renderTable(data);
-        updateTime();
+    render(data);
+    updateTime();
 
-    } catch (error) {
+  } catch (e) {
 
-        console.error(error);
+    console.error(e);
 
-        const tbody = document.getElementById("flowList");
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="5" style="color:red;">
-                    データを取得できませんでした
-                </td>
-            </tr>
-        `;
-    }
+    document.getElementById("flowList").innerHTML = `
+      <tr>
+        <td colspan="5" style="color:#ef4444;">
+          Failed to load data
+        </td>
+      </tr>
+    `;
+  }
 }
 
 
-/* ===== Table描画 ===== */
+function render(data) {
 
-function renderTable(data) {
+  const tbody = document.getElementById("flowList");
 
-    const tbody = document.getElementById("flowList");
+  tbody.innerHTML = "";
 
-    tbody.innerHTML = "";
+  data.forEach(flow => {
 
-    data.forEach(flow => {
+    const tr = document.createElement("tr");
 
-        const statusClass = getStatusClass(flow.status);
+    tr.innerHTML = `
+      <td>${escape(flow.name)}</td>
+      <td class="${statusClass(flow.status)}">
+        ${flow.status || "-"}
+      </td>
+      <td>${flow.lastRun || "-"}</td>
+      <td>${flow.runTime ? flow.runTime + "s" : "-"}</td>
+      <td>${flow.result || "-"}</td>
+    `;
 
-        const tr = document.createElement("tr");
-
-        tr.innerHTML = `
-            <td>${escapeHtml(flow.name)}</td>
-            <td class="${statusClass}">
-                ${flow.status}
-            </td>
-            <td>${flow.lastRun || "-"}</td>
-            <td>${flow.runTime ? flow.runTime + "s" : "-"}</td>
-            <td>${flow.result || "-"}</td>
-        `;
-
-        tbody.appendChild(tr);
-    });
+    tbody.appendChild(tr);
+  });
 }
 
 
-/* ===== Status判定 ===== */
+function statusClass(status) {
 
-function getStatusClass(status) {
+  if (!status) return "status-unknown";
 
-    if (!status) return "status-unknown";
+  switch (status.toLowerCase()) {
 
-    switch (status.toLowerCase()) {
+    case "active":
+      return "status-active";
 
-        case "active":
-            return "status-active";
+    case "standby":
+      return "status-standby";
 
-        case "standby":
-            return "status-standby";
+    case "error":
+    case "failed":
+      return "status-error";
 
-        case "error":
-        case "failed":
-            return "status-error";
-
-        default:
-            return "status-unknown";
-    }
+    default:
+      return "status-unknown";
+  }
 }
 
-
-/* ===== 更新時刻表示 ===== */
 
 function updateTime() {
 
-    const now = new Date();
+  const d = new Date();
 
-    const text =
-        now.getFullYear() + "/" +
-        pad(now.getMonth() + 1) + "/" +
-        pad(now.getDate()) + " " +
-        pad(now.getHours()) + ":" +
-        pad(now.getMinutes());
+  const t =
+    d.getFullYear() + "/" +
+    pad(d.getMonth() + 1) + "/" +
+    pad(d.getDate()) + " " +
+    pad(d.getHours()) + ":" +
+    pad(d.getMinutes());
 
-    document.getElementById("updatedAt").textContent =
-        "最終更新：" + text;
+  document.getElementById("updatedAt").textContent =
+    "Updated: " + t;
 }
 
 
-/* ===== Utils ===== */
-
-function pad(num) {
-    return num.toString().padStart(2, "0");
+function pad(n) {
+  return n.toString().padStart(2, "0");
 }
 
 
-function escapeHtml(str) {
+function escape(str) {
 
-    if (!str) return "";
+  if (!str) return "";
 
-    return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
