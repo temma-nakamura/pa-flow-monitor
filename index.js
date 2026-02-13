@@ -16,7 +16,9 @@ async function loadFlowStatus() {
 
     const data = await res.json();
 
-    render(data);
+    console.log(data);
+
+    //render(data);
     updateTime();
 
   } catch (e) {
@@ -26,7 +28,7 @@ async function loadFlowStatus() {
     document.getElementById("flowList").innerHTML = `
       <tr>
         <td colspan="5" style="color:#ef4444;">
-          Failed to load data
+          フローデータを取得できませんでした。
         </td>
       </tr>
     `;
@@ -45,9 +47,9 @@ function render(data) {
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>${escape(flow.name)}</td>
-      <td class="${statusClass(flow.status)}">
-        ${flow.status || "-"}
+      <td>${escape(flow.properties.displayName)}</td>
+      <td class="${statusClass(flow.properties.state)}">
+        ${flow.properties.state || "-"}
       </td>
       <td>${flow.lastRun || "-"}</td>
       <td>${flow.runTime ? flow.runTime + "s" : "-"}</td>
