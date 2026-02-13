@@ -82,7 +82,7 @@ function render(data) {
 
 
     let time = ('hours' in flow.recurrence.schedule) ? flow.recurrence.schedule.hours : 0;
-    let min = ('minutes' in flow.recurrence.scheduleow) ? flow.recurrence.schedule.minutes : 0;
+    let min = ('minutes' in flow.recurrence.schedule) ? flow.recurrence.schedule.minutes : 0;
     
 
     tr.innerHTML = `
