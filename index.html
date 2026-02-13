@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Automate 稼働状況</title>
+
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<header>
+    <h1>Power Automate 稼働状況</h1>
+    <p id="updatedAt">最終更新：--</p>
+</header>
+
+<main>
+
+    <table>
+        <thead>
+            <tr>
+                <th>フロー名</th>
+                <th>状態</th>
+                <th>最終実行日時</th>
+                <th>実行時間</th>
+                <th>結果</th>
+            </tr>
+        </thead>
+
+        <tbody id="flowList">
+            <!-- JSで生成 -->
+        </tbody>
+    </table>
+
+</main>
+
+<script src="index.js"></script>
+</body>
+</html>
