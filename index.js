@@ -63,12 +63,12 @@ function render(data) {
           default:
               interval_label = '曜日';
               break;
-              
+
       }
 
 
       if (interval_label = '曜日') {
-          weekly_label = (flow.recurrence.schedule.weekDays);
+          weekly_label = ('weekDays' in flow) ? flow.recurrence.schedule.weekDays : [];
       }
 
 
