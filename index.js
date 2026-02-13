@@ -50,7 +50,7 @@ function render(data) {
 
     if (flow.recurrence !== null) {
 
-      switch (flow.recurrence.frequency) {
+      switch (flow.recurrence.frequency?.value) {
 
           case "Week":
               interval_label = '曜日';
@@ -72,7 +72,7 @@ function render(data) {
 
 
       if (interval_label = '曜日') {
-          weekly_label = ('weekDays' in flow) ? flow.recurrence.schedule.weekDays : [];
+          weekly_label = ('weekDays' in flow.recurrence.schedule) ? flow.recurrence.schedule.weekDays : [];
       }
 
 
@@ -81,8 +81,8 @@ function render(data) {
     }
 
 
-    let time = ('hours' in flow) ? flow.recurrence.schedule.hours : 0;
-    let min = ('minutes' in flow) ? flow.recurrence.schedule.minutes : 0;
+    let time = ('hours' in flow.recurrence.schedule) ? flow.recurrence.schedule.hours : 0;
+    let min = ('minutes' in flflow.recurrence.scheduleow) ? flow.recurrence.schedule.minutes : 0;
     
 
     tr.innerHTML = `
