@@ -54,7 +54,7 @@ function render(data) {
 
     if (flow.recurrence !== null) {
 
-        switch (flow.recurrence.frequency?.value) {
+        switch (flow?.recurrence?.frequency?.value) {
 
             case "Week":
                 interval_label = '曜日';
@@ -65,7 +65,7 @@ function render(data) {
                 break;
 
             case "Month":
-                interval_label = (flow.recurrence.interval + 'ヵ月');
+                interval_label = ((flow?.recurrence?.interval) + 'ヵ月');
                 break;
           
             default:
@@ -87,6 +87,8 @@ function render(data) {
     let time = flow?.recurrence?.schedule?.hasOwnProperty('hours') ? flow.recurrence.schedule.hours : 0;
     let min = flow?.recurrence?.schedule?.hasOwnProperty('minutes') ? flow.recurrence.schedule.minutes : 0;
     
+    let flow_status_label = statusClass(flow.state);
+
 
     tr.innerHTML = `
       <td>${escape(flow.flowName)}</td>
@@ -111,13 +113,13 @@ function statusClass(status) {
   switch (status.toLowerCase()) {
 
     case "Stopped":
-      return "status-stopped";
+      return "stopped";
 
     case "Started":
-      return "status-started";
+      return "active";
 
     default:
-      return "status-unknown";
+      return "unknown";
   }
 }
 
