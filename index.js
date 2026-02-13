@@ -111,39 +111,3 @@ function escape(str) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 }
-
-
-async function reload_data() {
-
-    const FLOW_URL = 'https://default89f38dda879047709595a7ecf63263.84.environment.api.powerplatform.com/powerautomate/automations/direct/workflows/5102ab2749dc4406ad1dbc35fc48d44b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Vg4TaQfR0ctAHj3fT2to0wMLJcb5gIlsZiqDOcFCbmg';
-
-    try {
-
-        const res = await fetch(FLOW_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                user: "test",
-                time: new Date().toISOString()
-            })
-        });
-
-        if (!res.ok) {
-            const err = await res.text();
-            throw new Error(err);
-        }
-
-        const data = await res.json();
-
-        console.log("=== Power Automate Response ===");
-        console.log(data);
-
-    } catch (e) {
-        console.error("呼び出し失敗:");
-        console.error(e);
-    }
-
-  
-}
