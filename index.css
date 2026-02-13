@@ -69,17 +69,16 @@ body {
 ================================ */
 
 .container {
-  max-width: 1200px;
-  margin: 32px auto;
-  padding: 0 24px;
+    max-width: 1300px;
+    margin: 32px auto;
+    padding: 0 24px;
 }
 
 .card {
-  background: var(--bg-card);
-  border-radius: 14px;
-  padding: 8px 0;
-
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 8px 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
 

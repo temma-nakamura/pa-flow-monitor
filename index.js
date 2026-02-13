@@ -42,6 +42,10 @@ function render(data) {
 
   data.forEach(flow => {
 
+    if ((flow.state === "Stopped") || (flow.state === "Suspended")) {
+      return;
+    }
+
     const tr = document.createElement("tr");
 
     let interval_label = '';
