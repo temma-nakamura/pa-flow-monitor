@@ -48,20 +48,27 @@ function render(data) {
     let time_label = '';
     let weekly_label = '';
 
-    switch (flow.recurrence.frequency) {
+    if (flow.recurrence.frequency !== null) {
 
-      case "Week":
-        interval_label = '曜日';
-        break;
+      switch (flow.recurrence.frequency) {
 
-      case "Month":
-        interval_label = (flow.recurrence.interval + 'ヵ月');
-        break;
-    
-      default:
-        interval_label = '曜日';
-        break;
+        case "Week":
+          interval_label = '曜日';
+          break;
+
+        case "Month":
+          interval_label = (flow.recurrence.interval + 'ヵ月');
+          break;
+      
+        default:
+          interval_label = '曜日';
+          break;
+      }
+
+    } else {
+      interval_label = '-';
     }
+
 
     let time = ('hours' in flow) ? flow.hours : 0;
     let min = ('minutes' in flow) ? flow.minutes : 0;
