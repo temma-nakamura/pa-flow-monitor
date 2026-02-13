@@ -48,7 +48,7 @@ function render(data) {
     let time_label = '';
     let weekly_label = '';
 
-    if (flow.recurrence.frequency !== null) {
+    if (flow.recurrence !== null) {
 
       switch (flow.recurrence.frequency) {
 
