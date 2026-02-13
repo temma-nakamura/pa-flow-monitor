@@ -16,9 +16,7 @@ async function loadFlowStatus() {
 
     const data = await res.json();
 
-    console.log(data);
-
-    //render(data);
+    render(data);
     updateTime();
 
   } catch (e) {
@@ -46,14 +44,45 @@ function render(data) {
 
     const tr = document.createElement("tr");
 
+    let interval_label = '';
+    let time_label = '';
+    let weekly_label = '';
+
+    switch (flow.recurrence.frequency) {
+
+      case "Week":
+        interval_label = '曜日';
+        break;
+
+      case "Month":
+        interval_label = (flow.recurrence.interval + 'ヵ月');
+        break;
+    
+      default:
+        interval_label = '曜日';
+        break;
+    }
+
+    let time = ('hours' in flow) ? flow.hours : 0;
+    let min = ('minutes' in flow) ? flow.minutes : 0;
+
+
+    if (interval_label = '曜日') {
+
+      weekly_label = (flow.recurrence.schedule.weekDays);
+
+    }
+    
+
     tr.innerHTML = `
-      <td>${escape(flow.properties.displayName)}</td>
-      <td class="${statusClass(flow.properties.state)}">
-        ${flow.properties.state || "-"}
+      <td>${escape(flow.flowName)}</td>
+      <td class="${statusClass(flow.state)}">
+        ${flow.state || "-"}
       </td>
-      <td>${flow.lastRun || "-"}</td>
-      <td>${flow.runTime ? flow.runTime + "s" : "-"}</td>
-      <td>${flow.result || "-"}</td>
+      <td>${interval_label || "-"}</td>
+      <td>${weekly_label || "-"}</td>
+      <td>${time || "-"}</td>
+      <td>${min || "-"}</td>
     `;
 
     tbody.appendChild(tr);
@@ -67,15 +96,11 @@ function statusClass(status) {
 
   switch (status.toLowerCase()) {
 
-    case "active":
-      return "status-active";
+    case "Stopped":
+      return "status-stopped";
 
-    case "standby":
-      return "status-standby";
-
-    case "error":
-    case "failed":
-      return "status-error";
+    case "Started":
+      return "status-started";
 
     default:
       return "status-unknown";
