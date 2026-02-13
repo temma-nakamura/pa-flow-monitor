@@ -52,33 +52,33 @@ function render(data) {
 
       switch (flow.recurrence.frequency) {
 
-        case "Week":
-          interval_label = '曜日';
-          break;
+          case "Week":
+              interval_label = '曜日';
+              break;
 
-        case "Month":
-          interval_label = (flow.recurrence.interval + 'ヵ月');
-          break;
-      
-        default:
-          interval_label = '曜日';
-          break;
+          case "Month":
+              interval_label = (flow.recurrence.interval + 'ヵ月');
+              break;
+        
+          default:
+              interval_label = '曜日';
+              break;
+              
       }
 
+
+      if (interval_label = '曜日') {
+          weekly_label = (flow.recurrence.schedule.weekDays);
+      }
+
+
     } else {
-      interval_label = '-';
+        interval_label = '-';
     }
 
 
     let time = ('hours' in flow) ? flow.hours : 0;
     let min = ('minutes' in flow) ? flow.minutes : 0;
-
-
-    if (interval_label = '曜日') {
-
-      weekly_label = (flow.recurrence.schedule.weekDays);
-
-    }
     
 
     tr.innerHTML = `
