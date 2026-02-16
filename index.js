@@ -56,7 +56,7 @@ function render(data) {
 
         console.log((flow?.recurrence?.frequency));
 
-        switch (flow?.recurrence?.frequency?.value) {
+        switch (flow?.recurrence?.frequency) {
 
             case "Week":
                 interval_label = '曜日';
