@@ -54,7 +54,7 @@ function render(data) {
 
     if (flow.recurrence !== null) {
 
-        console.log((flow?.recurrence?.frequency?.value));
+        console.log((flow?.recurrence?.frequency));
 
         switch (flow?.recurrence?.frequency?.value) {
 
