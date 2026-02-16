@@ -1,12 +1,27 @@
-
 document.addEventListener("DOMContentLoaded", () => {
+
   loadFlowStatus();
+  initSort();
+
 });
 
 
+/* ===============================
+   Global
+================================ */
+
+let flowData = [];
+let sortState = {};
+
+
+/* ===============================
+   Load
+================================ */
+
 async function loadFlowStatus() {
 
-  const FLOW_URL = 'https://default89f38dda879047709595a7ecf63263.84.environment.api.powerplatform.com/powerautomate/automations/direct/workflows/5102ab2749dc4406ad1dbc35fc48d44b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Vg4TaQfR0ctAHj3fT2to0wMLJcb5gIlsZiqDOcFCbmg';
+  const FLOW_URL =
+    "https://default89f38dda879047709595a7ecf63263.84.environment.api.powerplatform.com/powerautomate/automations/direct/workflows/5102ab2749dc4406ad1dbc35fc48d44b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Vg4TaQfR0ctAHj3fT2to0wMLJcb5gIlsZiqDOcFCbmg";
 
   try {
 
@@ -16,7 +31,9 @@ async function loadFlowStatus() {
 
     const data = await res.json();
 
-    render(data);
+    flowData = data;
+
+    render(flowData);
     updateTime();
 
   } catch (e) {
@@ -25,8 +42,8 @@ async function loadFlowStatus() {
 
     document.getElementById("flowList").innerHTML = `
       <tr>
-        <td colspan="5" style="color:#ef4444;">
-          フローデータを取得できませんでした。
+        <td colspan="6" style="color:#ef4444;">
+          フローデータを取得できませんでした
         </td>
       </tr>
     `;
@@ -34,112 +51,193 @@ async function loadFlowStatus() {
 }
 
 
+/* ===============================
+   Render
+================================ */
+
 function render(data) {
 
   const tbody = document.getElementById("flowList");
 
   tbody.innerHTML = "";
 
+  const convertMap = {
+    Monday: '月',
+    Tuesday: '火',
+    Wednesday: '水',
+    Thursday: '木',
+    Friday: '金',
+    Saturday: '土',
+    Sunday: '日',
+  };
+
+
   data.forEach(flow => {
 
-    if ((flow.state === "Stopped") || (flow.state === "Suspended")) {
+    if (flow.state === "Stopped" || flow.state === "Suspended") {
       return;
     }
 
     const tr = document.createElement("tr");
 
-    let interval_label = '';
-    let time_label = '';
-    let weekly_label = '';
-    let result_label = '';
 
-    if (flow.recurrence !== null) {
+    /* interval */
 
-        switch (flow?.recurrence?.frequency) {
+    let intervalLabel = "-";
 
-            case "Week":
-                interval_label = '曜日';
-                break;
+    switch (flow?.recurrence?.frequency) {
 
-            case "Day":
-                interval_label = '日';
-                break;
+      case "Week":
+        intervalLabel = "曜日";
+        break;
 
-            case "Month":
-                interval_label = ((flow?.recurrence?.interval) + 'ヵ月');
-                break;
-          
-            default:
-                interval_label = '曜日';
-                break;
+      case "Day":
+        intervalLabel = "日";
+        break;
 
-        }
-
-
-        if (interval_label = '曜日') {
-
-            weekly_label = flow?.recurrence?.schedule?.hasOwnProperty('weekDays') ? flow.recurrence.schedule.weekDays : [];
-
-            const convertMap = {
-                Monday: '月',
-                Tuesday: '火',
-                Wednesday: '水',
-                Thursday: '木',
-                Friday: '金',
-                Saturday: '土',
-                Sunday: '日',
-            };
-
-            result_label = weekly_label
-              .map(d => convertMap[d] ?? d)
-              .join(',');
-
-        }
-
-    } else {
-        interval_label = '-';
+      case "Month":
+        intervalLabel = flow.recurrence.interval + "ヵ月";
+        break;
     }
 
 
-    let time = flow?.recurrence?.schedule?.hasOwnProperty('hours') ? flow.recurrence.schedule.hours : 0;
-    let min = flow?.recurrence?.schedule?.hasOwnProperty('minutes') ? flow.recurrence.schedule.minutes : 0;
-    
-    let flow_status_label = statusClass(flow.state);
+    /* week */
+
+    let weekLabel = "-";
+
+    const week = flow?.recurrence?.schedule?.weekDays ?? [];
+
+    if (Array.isArray(week) && week.length) {
+
+      weekLabel = week
+        .map(d => convertMap[d] ?? d)
+        .join(",");
+    }
+
+
+    /* time */
+
+    const hour = flow?.recurrence?.schedule?.hours ?? "-";
+    const min  = flow?.recurrence?.schedule?.minutes ?? "-";
+
+
+    /* status */
+
+    const statusClass = getStatusClass(flow.state);
 
 
     tr.innerHTML = `
-      <td>${escape(flow.flowName)}</td>
-      <td class="${flow_status_label}">
-        ${flow.state || "-"}
-      </td>
-      <td>${interval_label || "-"}</td>
-      <td>${result_label || "-"}</td>
-      <td>${time || "-"}</td>
-      <td>${min || "-"}</td>
+      <td>${escapeHtml(flow.flowName)}</td>
+      <td class="${statusClass}">${flow.state}</td>
+      <td>${intervalLabel}</td>
+      <td>${weekLabel}</td>
+      <td>${hour}</td>
+      <td>${min}</td>
     `;
 
     tbody.appendChild(tr);
   });
+
 }
 
 
-function statusClass(status) {
+/* ===============================
+   Status Class
+================================ */
 
-  if (!status) return "status-unknown";
+function getStatusClass(status) {
 
   switch (status) {
 
-    case "Stopped":
-      return "stopped";
-
     case "Started":
-      return "active";
+      return "status-active";
+
+    case "Stopped":
+      return "status-stopped";
 
     default:
-      return "unknown";
+      return "status-unknown";
   }
 }
 
+
+/* ===============================
+   Sort
+================================ */
+
+function initSort() {
+
+  document
+    .querySelectorAll("th[data-sort]")
+    .forEach(th => {
+
+      th.addEventListener("click", () => {
+
+        const key = th.dataset.sort;
+
+        const order =
+          sortState[key] === "asc" ? "desc" : "asc";
+
+        sortState = {};
+        sortState[key] = order;
+
+        sortTable(key, order);
+      });
+
+    });
+}
+
+
+function sortTable(key, order) {
+
+  const sorted = [...flowData].sort((a, b) => {
+
+    const v1 = getSortValue(a, key);
+    const v2 = getSortValue(b, key);
+
+    if (v1 < v2) return order === "asc" ? -1 : 1;
+    if (v1 > v2) return order === "asc" ? 1 : -1;
+
+    return 0;
+  });
+
+  render(sorted);
+}
+
+
+function getSortValue(flow, key) {
+
+  switch (key) {
+
+    case "name":
+      return flow.flowName ?? "";
+
+    case "status":
+      return flow.state ?? "";
+
+    case "interval":
+      return flow?.recurrence?.frequency ?? "";
+
+    case "week":
+      return (
+        flow?.recurrence?.schedule?.weekDays?.join(",") ?? ""
+      );
+
+    case "hour":
+      return flow?.recurrence?.schedule?.hours ?? 0;
+
+    case "min":
+      return flow?.recurrence?.schedule?.minutes ?? 0;
+
+    default:
+      return "";
+  }
+}
+
+
+/* ===============================
+   Time
+================================ */
 
 function updateTime() {
 
@@ -162,7 +260,11 @@ function pad(n) {
 }
 
 
-function escape(str) {
+/* ===============================
+   Escape
+================================ */
+
+function escapeHtml(str) {
 
   if (!str) return "";
 

@@ -7,36 +7,46 @@
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
-  <header class="header">
-    <div class="header-left">
-      <h1>Flow Monitor</h1>
-      <span class="subtitle">Power Automate Status</span>
-    </div>
 
-    <div class="header-right">
-      <span id="updatedAt">--</span>
-    </div>
-  </header>
-  <main class="container">
-    <button onclick="loadFlowStatus();">更新</button>
-    <div class="card">
-      <table>
-        <thead>
-          <tr>
-            <th>フロー名</th>
-            <th>ステータス</th>
-            <th>実行間隔</th>
-            <th>実行曜日</th>
-            <th>実行時間(Hour)</th>
-            <th>実行時間(Min)</th>
-          </tr>
-        </thead>
-        <tbody id="flowList">
-          <!-- JS生成 -->
-        </tbody>
-      </table>
-    </div>
-  </main>
-  <script src="index.js"></script>
+<header class="header">
+  <div class="header-left">
+    <h1>Flow Monitor</h1>
+    <span class="subtitle">Power Automate Status</span>
+  </div>
+
+  <div class="header-right">
+    <span id="updatedAt">--</span>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- 更新ボタン -->
+  <button class="btn-refresh" onclick="loadFlowStatus()">更新</button>
+
+  <div class="card">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th data-sort="name">フロー名</th>
+          <th data-sort="status">ステータス</th>
+          <th data-sort="interval">実行間隔</th>
+          <th data-sort="week">実行曜日</th>
+          <th data-sort="hour">実行時間(Hour)</th>
+          <th data-sort="min">実行時間(Min)</th>
+        </tr>
+      </thead>
+
+      <tbody id="flowList">
+      </tbody>
+
+    </table>
+
+  </div>
+</main>
+
+<script src="index.js"></script>
 </body>
 </html>
