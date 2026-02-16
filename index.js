@@ -76,7 +76,8 @@ function render(data) {
 
 
         if (interval_label = '曜日') {
-            weekly_label = flow?.recurrence?.schedule?.hasOwnProperty('weekDays') ? flow.recurrence.schedule.weekDays : [];
+
+            weekly_label = flow?.recurrence?.schedule?.hasOwnProperty('weekDays') ? flow.recurrence.schedule.weekDays : '';
 
             const convertMap = {
               Monday: '月曜日',
