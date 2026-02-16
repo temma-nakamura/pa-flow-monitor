@@ -77,19 +77,16 @@ function render(data) {
 
         if (interval_label = '曜日') {
 
-            weekly_label = flow?.recurrence?.schedule?.hasOwnProperty('weekDays') ? flow.recurrence.schedule.weekDays : '';
+            weekly_label = flow?.recurrence?.schedule?.hasOwnProperty('weekDays') ? flow.recurrence.schedule.weekDays : [];
 
-            const convertMap = {
-              Monday: '月曜日',
-              Tuesday: '火曜日',
-              Wednesday: '水曜日',
-              Thursday: '木曜日',
-              Friday: '金曜日',
-              Saturday: '土曜日',
-              Sunday: '日曜日',
-            };
-
-            const result = weekly_label.split(',').map(d => convertMap[d] ?? d).join(',');
+            weekly_label = weekly_label
+              .replace('Monday', '月曜日')
+              .replace('Tuesday', '火曜日')
+              .replace('Wednesday', '水曜日')
+              .replace('Thursday', '木曜日')
+              .replace('Friday', '金曜日')
+              .replace('Saturday', '土曜日')
+              .replace('Sunday', '日曜日');
 
         }
 
