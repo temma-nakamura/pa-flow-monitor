@@ -54,8 +54,6 @@ function render(data) {
 
     if (flow.recurrence !== null) {
 
-        console.log((flow?.recurrence?.frequency));
-
         switch (flow?.recurrence?.frequency) {
 
             case "Week":
@@ -67,6 +65,7 @@ function render(data) {
                 break;
 
             case "Month":
+                console.log((flow?.recurrence?.interval));
                 interval_label = ((flow?.recurrence?.interval) + 'ヵ月');
                 break;
           
