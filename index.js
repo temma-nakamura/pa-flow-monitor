@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
+
   loadFlowStatus();
   initSort();
+
 });
 
 
@@ -12,11 +14,11 @@ let flowData = [];
 let sortState = {};
 
 const FLOW_URL =
-  "https://default89f38dda879047709595a7ecf63263.84.environment.api.powerplatform.com/powerautomate/automations/direct/workflows/5102ab2749dc4406ad1dbc35fc48d44b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Vg4TaQfR0ctAHj3fT2to0wMLJcb5gIlsZiqDOcFCbmg";
+"https://default89f38dda879047709595a7ecf63263.84.environment.api.powerplatform.com/powerautomate/automations/direct/workflows/5102ab2749dc4406ad1dbc35fc48d44b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Vg4TaQfR0ctAHj3fT2to0wMLJcb5gIlsZiqDOcFCbmg";
 
 
 /* ===============================
-   Main Load
+   Load
 ================================ */
 
 async function loadFlowStatus() {
@@ -25,36 +27,30 @@ async function loadFlowStatus() {
 
   try {
 
-    /* ===== API Call ===== */
     const res = await fetch(FLOW_URL);
 
-    if (!res.ok) {
-      throw new Error("API Error");
-    }
+    if (!res.ok) throw new Error();
 
     const data = await res.json();
 
     flowData = data;
 
     render(flowData);
+
     updateTime();
 
-  } catch (e) {
-
-    console.error(e);
+  } catch {
 
     document.getElementById("flowList").innerHTML = `
       <tr>
-        <td colspan="6" style="color:#ef4444;">
-          データ取得に失敗しました
+        <td colspan="6" style="color:#ef4444;text-align:center;">
+          取得失敗
         </td>
       </tr>
     `;
 
-  } finally {
-
-    hideLoading();
   }
+
 }
 
 
@@ -62,52 +58,46 @@ async function loadFlowStatus() {
    Render
 ================================ */
 
-function render(data) {
+function render(list) {
 
   const tbody = document.getElementById("flowList");
 
   tbody.innerHTML = "";
 
-  data.forEach(flow => {
+  list.forEach(flow => {
 
-    if (flow.state === "Stopped" || flow.state === "Suspended") {
-      return;
-    }
+    if (
+      flow.state === "Stopped" ||
+      flow.state === "Suspended"
+    ) return;
 
-    const tr = document.createElement("tr");
 
-    /* ===== Interval ===== */
+    let interval = "-";
+    let week = "-";
 
-    let intervalLabel = "-";
-    let weekLabel = "-";
 
     if (flow.recurrence) {
 
       switch (flow.recurrence.frequency) {
 
         case "Week":
-          intervalLabel = "週";
+          interval = "週";
           break;
 
         case "Day":
-          intervalLabel = "日";
+          interval = "日";
           break;
 
         case "Month":
-          intervalLabel = flow.recurrence.interval + "ヶ月";
+          interval = flow.recurrence.interval + "ヶ月";
           break;
-
-        default:
-          intervalLabel = "-";
       }
 
 
-      /* ===== Week Day ===== */
-
-      const weekDays =
+      const days =
         flow?.recurrence?.schedule?.weekDays ?? [];
 
-      const convertMap = {
+      const map = {
         Monday: "月",
         Tuesday: "火",
         Wednesday: "水",
@@ -117,16 +107,15 @@ function render(data) {
         Sunday: "日",
       };
 
-      if (Array.isArray(weekDays)) {
+      if (Array.isArray(days)) {
 
-        weekLabel = weekDays
-          .map(d => convertMap[d] ?? d)
+        week = days
+          .map(d => map[d] ?? d)
           .join(",");
+
       }
     }
 
-
-    /* ===== Time ===== */
 
     const hour =
       flow?.recurrence?.schedule?.hours ?? "-";
@@ -135,28 +124,28 @@ function render(data) {
       flow?.recurrence?.schedule?.minutes ?? "-";
 
 
-    /* ===== Status ===== */
-
-    const statusInfo = statusClass(flow.state);
+    const status = getStatus(flow.state);
 
 
-    /* ===== HTML ===== */
+    const tr = document.createElement("tr");
 
     tr.innerHTML = `
       <td>${escapeHtml(flow.flowName)}</td>
 
-      <td class="${statusInfo.class}">
-        ${statusInfo.label}
+      <td class="${status.class}">
+        ${status.label}
       </td>
 
-      <td>${intervalLabel}</td>
-      <td>${weekLabel}</td>
+      <td>${interval}</td>
+      <td>${week}</td>
       <td>${hour}</td>
       <td>${min}</td>
     `;
 
     tbody.appendChild(tr);
+
   });
+
 }
 
 
@@ -164,9 +153,9 @@ function render(data) {
    Status
 ================================ */
 
-function statusClass(status) {
+function getStatus(state) {
 
-  switch (status) {
+  switch (state) {
 
     case "Started":
       return {
@@ -189,9 +178,10 @@ function statusClass(status) {
     default:
       return {
         class: "status-unknown",
-        label: status ?? "-"
+        label: state ?? "-"
       };
   }
+
 }
 
 
@@ -217,19 +207,23 @@ function initSort() {
         sortState = {};
         sortState[key] = order;
 
-        sortTable(key, order);
+        doSort(key, order);
+
       });
 
     });
+
 }
 
 
-function sortTable(key, order) {
+function doSort(key, order) {
 
-  const sorted = [...flowData].sort((a, b) => {
+  const sorted = [...flowData];
 
-    let v1 = getSortValue(a, key);
-    let v2 = getSortValue(b, key);
+  sorted.sort((a, b) => {
+
+    let v1 = getValue(a, key);
+    let v2 = getValue(b, key);
 
     if (v1 < v2) return order === "asc" ? -1 : 1;
     if (v1 > v2) return order === "asc" ? 1 : -1;
@@ -238,10 +232,11 @@ function sortTable(key, order) {
   });
 
   render(sorted);
+
 }
 
 
-function getSortValue(flow, key) {
+function getValue(flow, key) {
 
   switch (key) {
 
@@ -268,6 +263,7 @@ function getSortValue(flow, key) {
     default:
       return "";
   }
+
 }
 
 
@@ -277,20 +273,14 @@ function getSortValue(flow, key) {
 
 function showLoading() {
 
-  const tbody = document.getElementById("flowList");
-
-  tbody.innerHTML = `
+  document.getElementById("flowList").innerHTML = `
     <tr>
       <td colspan="6" style="text-align:center;">
         読み込み中...
       </td>
     </tr>
   `;
-}
 
-
-function hideLoading() {
-  // renderで上書きされるので空でOK
 }
 
 
@@ -324,7 +314,8 @@ function escapeHtml(str) {
   if (!str) return "";
 
   return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+
 }

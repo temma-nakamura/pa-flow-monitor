@@ -1,60 +1,50 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TEIMO Flow Monitor</title>
-  <link rel="stylesheet" href="index.css"/>
+  <link rel="stylesheet" href="index.css">
 </head>
 <body>
 
-<!-- ローディング -->
-<div id="loading" class="loading-overlay">
-  <div class="spinner"></div>
-  <p>Loading...</p>
-</div>
-
 <header class="header">
-  <div>
+  <div class="header-left">
     <h1>Flow Monitor</h1>
     <span class="subtitle">Power Automate Status</span>
   </div>
 
   <div class="header-right">
-    更新：<span id="updatedAt">--</span>
+    <span id="updatedAt">--</span>
   </div>
 </header>
 
+
 <main class="container">
 
-  <button id="reloadBtn" onclick="loadFlowStatus()">
-    🔄 更新
+  <button class="btn-refresh" onclick="loadFlowStatus()">
+    更新
   </button>
 
   <div class="card">
 
-    <div class="table-wrapper">
+    <table>
 
-      <table id="flowTable">
+      <thead>
+        <tr>
+          <th data-sort="name">フロー名</th>
+          <th data-sort="status">ステータス</th>
+          <th data-sort="interval">実行間隔</th>
+          <th data-sort="week">実行曜日</th>
+          <th data-sort="hour">Hour</th>
+          <th data-sort="min">Min</th>
+        </tr>
+      </thead>
 
-        <thead>
-          <tr>
-            <th data-key="name">フロー名</th>
-            <th data-key="status">ステータス</th>
-            <th data-key="interval">実行間隔</th>
-            <th data-key="weekdays">実行曜日</th>
-            <th data-key="hour">Hour</th>
-            <th data-key="min">Min</th>
-          </tr>
-        </thead>
+      <tbody id="flowList">
+      </tbody>
 
-        <tbody id="flowList">
-          <!-- JS生成 -->
-        </tbody>
-
-      </table>
-
-    </div>
+    </table>
 
   </div>
 
