@@ -77,13 +77,24 @@ function render(data) {
 
         if (interval_label = '曜日') {
             weekly_label = flow?.recurrence?.schedule?.hasOwnProperty('weekDays') ? flow.recurrence.schedule.weekDays : [];
+
+            const convertMap = {
+              Monday: '月曜日',
+              Tuesday: '火曜日',
+              Wednesday: '水曜日',
+              Thursday: '木曜日',
+              Friday: '金曜日',
+              Saturday: '土曜日',
+              Sunday: '日曜日',
+            };
+
+            const result = weekly_label.split(',').map(d => convertMap[d] ?? d).join(',');
+
         }
 
     } else {
         interval_label = '-';
     }
-
-    console.log(interval_label);
 
 
     let time = flow?.recurrence?.schedule?.hasOwnProperty('hours') ? flow.recurrence.schedule.hours : 0;
@@ -112,7 +123,7 @@ function statusClass(status) {
 
   if (!status) return "status-unknown";
 
-  switch (status.toLowerCase()) {
+  switch (status) {
 
     case "Stopped":
       return "stopped";
