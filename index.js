@@ -79,7 +79,19 @@ function render(data) {
 
             weekly_label = flow?.recurrence?.schedule?.hasOwnProperty('weekDays') ? flow.recurrence.schedule.weekDays : [];
 
-            console.log(weekly_label, typeof(weekly_label));
+            const convertMap = {
+                Monday: '月',
+                Tuesday: '火',
+                Wednesday: '水',
+                Thursday: '木',
+                Friday: '金',
+                Saturday: '土',
+                Sunday: '日',
+            };
+
+            const result = weekly_label
+              .map(d => convertMap[d] ?? d)
+              .join(',');
 
         }
 
