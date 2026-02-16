@@ -148,3 +148,47 @@ tbody tr:hover {
 .status-unknown {
   color: var(--gray);
 }
+
+
+/* ===============================
+   Sticky thead fix
+================================ */
+
+thead th {
+  background: #1f2933;   /* ← これが重要 */
+  backdrop-filter: none;
+}
+
+
+/* ===============================
+   Loading Overlay
+================================ */
+
+#loading {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(15,17,23,0.85);
+
+  display: none;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+}
+
+#loading.active {
+  display: flex;
+}
+
+.loading-box {
+  background: #171a21;
+  padding: 24px 40px;
+
+  border-radius: 12px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,.5);
+}

@@ -13,23 +13,16 @@
     <h1>Flow Monitor</h1>
     <span class="subtitle">Power Automate Status</span>
   </div>
-
   <div class="header-right">
     <span id="updatedAt">--</span>
   </div>
 </header>
-
-
 <main class="container">
-
   <button class="btn-refresh" onclick="loadFlowStatus()">
     更新
   </button>
-
   <div class="card">
-
     <table>
-
       <thead>
         <tr>
           <th data-sort="name">フロー名</th>
@@ -40,16 +33,17 @@
           <th data-sort="min">Min</th>
         </tr>
       </thead>
-
       <tbody id="flowList">
       </tbody>
-
     </table>
-
   </div>
-
 </main>
-
 <script src="index.js"></script>
+<!-- Loading -->
+<div id="loading">
+  <div class="loading-box">
+    読み込み中...
+  </div>
+</div>
 </body>
 </html>

@@ -43,11 +43,16 @@ async function loadFlowStatus() {
 
     document.getElementById("flowList").innerHTML = `
       <tr>
-        <td colspan="6" style="color:#ef4444;text-align:center;">
+        <td colspan="6"
+            style="color:#ef4444;text-align:center;">
           取得失敗
         </td>
       </tr>
     `;
+
+  } finally {
+
+    hideLoading();
 
   }
 
@@ -273,13 +278,20 @@ function getValue(flow, key) {
 
 function showLoading() {
 
-  document.getElementById("flowList").innerHTML = `
-    <tr>
-      <td colspan="6" style="text-align:center;">
-        読み込み中...
-      </td>
-    </tr>
-  `;
+  document
+    .getElementById("loading")
+    .classList
+    .add("active");
+
+}
+
+
+function hideLoading() {
+
+  document
+    .getElementById("loading")
+    .classList
+    .remove("active");
 
 }
 
