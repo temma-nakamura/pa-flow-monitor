@@ -27,7 +27,6 @@ body {
 
 
 /* Header */
-
 .header {
   display: flex;
   justify-content: space-between;
@@ -46,7 +45,6 @@ body {
 
 
 /* Layout */
-
 .container {
   max-width: 1300px;
   margin: 32px auto;
@@ -56,17 +54,13 @@ body {
 .card {
   background: var(--bg-card);
   border-radius: 14px;
-  padding: 8px 0;
-
   max-height: 600px;
   overflow-y: auto;
-
   box-shadow: 0 10px 30px rgba(0,0,0,.4);
 }
 
 
 /* Button */
-
 .btn-refresh {
   background: var(--accent);
   color: #fff;
@@ -89,7 +83,6 @@ body {
 
 
 /* Table */
-
 table {
   width: 100%;
   border-collapse: collapse;
@@ -129,7 +122,6 @@ tbody tr:hover {
 
 
 /* Status */
-
 .status-active {
   color: var(--green);
   font-weight: 600;
@@ -155,7 +147,7 @@ tbody tr:hover {
 ================================ */
 
 thead th {
-  background: #1f2933;   /* ← これが重要 */
+  background: #1f2933;
   backdrop-filter: none;
 }
 
