@@ -1,60 +1,23 @@
-let flowData = [];
-let sortState = { key: null, asc: true };
-
-/* ================= 初期処理 ================= */
-
-window.addEventListener('load', () => {
+document.addEventListener("DOMContentLoaded", () => {
   loadFlowStatus();
   initSort();
 });
 
-/* ================= ローディング ================= */
 
-function showLoading() {
-  document.getElementById('loading').style.display = 'flex';
-}
+/* ===============================
+   Global
+================================ */
 
-function hideLoading() {
-  document.getElementById('loading').style.display = 'none';
-}
+let flowData = [];
+let sortState = {};
 
-/* ================= 曜日変換 ================= */
+const FLOW_URL =
+  "https://default89f38dda879047709595a7ecf63263.84.environment.api.powerplatform.com/powerautomate/automations/direct/workflows/5102ab2749dc4406ad1dbc35fc48d44b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Vg4TaQfR0ctAHj3fT2to0wMLJcb5gIlsZiqDOcFCbmg";
 
-const dayMap = {
-  Monday: '月',
-  Tuesday: '火',
-  Wednesday: '水',
-  Thursday: '木',
-  Friday: '金',
-  Saturday: '土',
-  Sunday: '日'
-};
 
-function convertWeek(days = []) {
-  return days.map(d => dayMap[d] ?? d).join(',');
-}
-
-/* ================= Status変換 ================= */
-
-function convertStatus(raw) {
-
-  switch (raw) {
-
-    case 'Started':
-      return { text: '稼働中', class: 'status-active' };
-
-    case 'Stopped':
-      return { text: '停止中', class: 'status-error' };
-
-    case 'Disabled':
-      return { text: '待機', class: 'status-standby' };
-
-    default:
-      return { text: '不明', class: 'status-unknown' };
-  }
-}
-
-/* ================= データ取得 ================= */
+/* ===============================
+   Main Load
+================================ */
 
 async function loadFlowStatus() {
 
@@ -62,30 +25,31 @@ async function loadFlowStatus() {
 
   try {
 
-    // ===== 本番はAPIに置き換え =====
-    await new Promise(r => setTimeout(r, 800));
+    /* ===== API Call ===== */
+    const res = await fetch(FLOW_URL);
 
-    flowData = [
-      {
-        name: 'Daily Report',
-        status: 'Started',
-        interval: 'Day',
-        weekdays: ['Monday','Tuesday','Wednesday','Thursday','Friday'],
-        hour: 9,
-        min: 0
-      },
-      {
-        name: 'Backup',
-        status: 'Stopped',
-        interval: 'Week',
-        weekdays: ['Sunday'],
-        hour: 2,
-        min: 30
-      }
-    ];
+    if (!res.ok) {
+      throw new Error("API Error");
+    }
 
-    renderTable();
+    const data = await res.json();
+
+    flowData = data;
+
+    render(flowData);
     updateTime();
+
+  } catch (e) {
+
+    console.error(e);
+
+    document.getElementById("flowList").innerHTML = `
+      <tr>
+        <td colspan="6" style="color:#ef4444;">
+          データ取得に失敗しました
+        </td>
+      </tr>
+    `;
 
   } finally {
 
@@ -93,87 +57,274 @@ async function loadFlowStatus() {
   }
 }
 
-/* ================= 表描画 ================= */
 
-function renderTable() {
+/* ===============================
+   Render
+================================ */
 
-  const tbody = document.getElementById('flowList');
-  tbody.innerHTML = '';
+function render(data) {
 
-  flowData.forEach(d => {
+  const tbody = document.getElementById("flowList");
 
-    const status = convertStatus(d.status);
+  tbody.innerHTML = "";
 
-    const tr = document.createElement('tr');
+  data.forEach(flow => {
+
+    if (flow.state === "Stopped" || flow.state === "Suspended") {
+      return;
+    }
+
+    const tr = document.createElement("tr");
+
+    /* ===== Interval ===== */
+
+    let intervalLabel = "-";
+    let weekLabel = "-";
+
+    if (flow.recurrence) {
+
+      switch (flow.recurrence.frequency) {
+
+        case "Week":
+          intervalLabel = "週";
+          break;
+
+        case "Day":
+          intervalLabel = "日";
+          break;
+
+        case "Month":
+          intervalLabel = flow.recurrence.interval + "ヶ月";
+          break;
+
+        default:
+          intervalLabel = "-";
+      }
+
+
+      /* ===== Week Day ===== */
+
+      const weekDays =
+        flow?.recurrence?.schedule?.weekDays ?? [];
+
+      const convertMap = {
+        Monday: "月",
+        Tuesday: "火",
+        Wednesday: "水",
+        Thursday: "木",
+        Friday: "金",
+        Saturday: "土",
+        Sunday: "日",
+      };
+
+      if (Array.isArray(weekDays)) {
+
+        weekLabel = weekDays
+          .map(d => convertMap[d] ?? d)
+          .join(",");
+      }
+    }
+
+
+    /* ===== Time ===== */
+
+    const hour =
+      flow?.recurrence?.schedule?.hours ?? "-";
+
+    const min =
+      flow?.recurrence?.schedule?.minutes ?? "-";
+
+
+    /* ===== Status ===== */
+
+    const statusInfo = statusClass(flow.state);
+
+
+    /* ===== HTML ===== */
 
     tr.innerHTML = `
-      <td>${d.name}</td>
+      <td>${escapeHtml(flow.flowName)}</td>
 
-      <td class="${status.class}">
-        ${status.text}
+      <td class="${statusInfo.class}">
+        ${statusInfo.label}
       </td>
 
-      <td>${d.interval}</td>
-
-      <td>${convertWeek(d.weekdays)}</td>
-
-      <td>${d.hour}</td>
-
-      <td>${d.min}</td>
+      <td>${intervalLabel}</td>
+      <td>${weekLabel}</td>
+      <td>${hour}</td>
+      <td>${min}</td>
     `;
 
     tbody.appendChild(tr);
   });
 }
 
-/* ================= 更新時間 ================= */
 
-function updateTime() {
+/* ===============================
+   Status
+================================ */
 
-  document.getElementById('updatedAt')
-    .textContent =
-    new Date().toLocaleString();
+function statusClass(status) {
+
+  switch (status) {
+
+    case "Started":
+      return {
+        class: "status-active",
+        label: "稼働中"
+      };
+
+    case "Stopped":
+      return {
+        class: "status-error",
+        label: "停止"
+      };
+
+    case "Suspended":
+      return {
+        class: "status-standby",
+        label: "一時停止"
+      };
+
+    default:
+      return {
+        class: "status-unknown",
+        label: status ?? "-"
+      };
+  }
 }
 
-/* ================= ソート ================= */
+
+/* ===============================
+   Sort
+================================ */
 
 function initSort() {
 
   document
-    .querySelectorAll('th[data-key]')
+    .querySelectorAll("th[data-sort]")
     .forEach(th => {
 
-      th.addEventListener('click', () => {
+      th.addEventListener("click", () => {
 
-        const key = th.dataset.key;
+        const key = th.dataset.sort;
 
-        sortTable(key);
+        const order =
+          sortState[key] === "asc"
+            ? "desc"
+            : "asc";
+
+        sortState = {};
+        sortState[key] = order;
+
+        sortTable(key, order);
       });
+
     });
 }
 
-function sortTable(key) {
 
-  if (sortState.key === key) {
-    sortState.asc = !sortState.asc;
-  } else {
-    sortState.key = key;
-    sortState.asc = true;
-  }
+function sortTable(key, order) {
 
-  flowData.sort((a,b)=>{
+  const sorted = [...flowData].sort((a, b) => {
 
-    let v1 = a[key];
-    let v2 = b[key];
+    let v1 = getSortValue(a, key);
+    let v2 = getSortValue(b, key);
 
-    if (Array.isArray(v1)) v1 = v1.join();
-    if (Array.isArray(v2)) v2 = v2.join();
-
-    if (v1 > v2) return sortState.asc ? 1 : -1;
-    if (v1 < v2) return sortState.asc ? -1 : 1;
+    if (v1 < v2) return order === "asc" ? -1 : 1;
+    if (v1 > v2) return order === "asc" ? 1 : -1;
 
     return 0;
   });
 
-  renderTable();
+  render(sorted);
+}
+
+
+function getSortValue(flow, key) {
+
+  switch (key) {
+
+    case "name":
+      return flow.flowName ?? "";
+
+    case "status":
+      return flow.state ?? "";
+
+    case "interval":
+      return flow?.recurrence?.frequency ?? "";
+
+    case "week":
+      return (
+        flow?.recurrence?.schedule?.weekDays?.join(",") ?? ""
+      );
+
+    case "hour":
+      return flow?.recurrence?.schedule?.hours ?? 0;
+
+    case "min":
+      return flow?.recurrence?.schedule?.minutes ?? 0;
+
+    default:
+      return "";
+  }
+}
+
+
+/* ===============================
+   Loading
+================================ */
+
+function showLoading() {
+
+  const tbody = document.getElementById("flowList");
+
+  tbody.innerHTML = `
+    <tr>
+      <td colspan="6" style="text-align:center;">
+        読み込み中...
+      </td>
+    </tr>
+  `;
+}
+
+
+function hideLoading() {
+  // renderで上書きされるので空でOK
+}
+
+
+/* ===============================
+   Utility
+================================ */
+
+function updateTime() {
+
+  const d = new Date();
+
+  const t =
+    d.getFullYear() + "/" +
+    pad(d.getMonth() + 1) + "/" +
+    pad(d.getDate()) + " " +
+    pad(d.getHours()) + ":" +
+    pad(d.getMinutes());
+
+  document.getElementById("updatedAt").textContent =
+    "Updated: " + t;
+}
+
+
+function pad(n) {
+  return n.toString().padStart(2, "0");
+}
+
+
+function escapeHtml(str) {
+
+  if (!str) return "";
+
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
