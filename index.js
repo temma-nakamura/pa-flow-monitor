@@ -65,7 +65,6 @@ function render(data) {
                 break;
 
             case "Month":
-                console.log((flow?.recurrence?.interval));
                 interval_label = ((flow?.recurrence?.interval) + 'ヵ月');
                 break;
           
@@ -84,6 +83,8 @@ function render(data) {
         interval_label = '-';
     }
 
+    console.log(interval_label);
+
 
     let time = flow?.recurrence?.schedule?.hasOwnProperty('hours') ? flow.recurrence.schedule.hours : 0;
     let min = flow?.recurrence?.schedule?.hasOwnProperty('minutes') ? flow.recurrence.schedule.minutes : 0;
@@ -93,7 +94,7 @@ function render(data) {
 
     tr.innerHTML = `
       <td>${escape(flow.flowName)}</td>
-      <td class="${statusClass(flow.state)}">
+      <td class="${flow_status_label}">
         ${flow.state || "-"}
       </td>
       <td>${interval_label || "-"}</td>
