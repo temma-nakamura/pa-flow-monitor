@@ -79,14 +79,7 @@ function render(data) {
 
             weekly_label = flow?.recurrence?.schedule?.hasOwnProperty('weekDays') ? flow.recurrence.schedule.weekDays : [];
 
-            weekly_label = weekly_label
-              .replace('Monday', '月曜日')
-              .replace('Tuesday', '火曜日')
-              .replace('Wednesday', '水曜日')
-              .replace('Thursday', '木曜日')
-              .replace('Friday', '金曜日')
-              .replace('Saturday', '土曜日')
-              .replace('Sunday', '日曜日');
+            console.log(weekly_label, typeof(weekly_label));
 
         }
 
