@@ -93,7 +93,7 @@ function render(data) {
               .map(d => convertMap[d] ?? d)
               .join(',');
 
-            console1.log(result);
+            console.log(result);
 
         }
 
