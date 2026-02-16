@@ -54,6 +54,8 @@ function render(data) {
 
     if (flow.recurrence !== null) {
 
+        console.log((flow?.recurrence?.frequency?.value));
+
         switch (flow?.recurrence?.frequency?.value) {
 
             case "Week":
