@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  loadFlowStatus();
   initSort();
+  loadFlowStatus();
 
 });
 
@@ -15,10 +15,25 @@ let sortState = {};
 
 
 /* ===============================
+   Loading Control
+================================ */
+
+function showLoading() {
+  document.getElementById("loading").classList.remove("hidden");
+}
+
+function hideLoading() {
+  document.getElementById("loading").classList.add("hidden");
+}
+
+
+/* ===============================
    Load
 ================================ */
 
 async function loadFlowStatus() {
+
+  showLoading();
 
   const FLOW_URL =
     "https://default89f38dda879047709595a7ecf63263.84.environment.api.powerplatform.com/powerautomate/automations/direct/workflows/5102ab2749dc4406ad1dbc35fc48d44b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Vg4TaQfR0ctAHj3fT2to0wMLJcb5gIlsZiqDOcFCbmg";
@@ -47,6 +62,11 @@ async function loadFlowStatus() {
         </td>
       </tr>
     `;
+
+  } finally {
+
+    hideLoading();
+
   }
 }
 
@@ -60,6 +80,7 @@ function render(data) {
   const tbody = document.getElementById("flowList");
 
   tbody.innerHTML = "";
+
 
   const convertMap = {
     Monday: '月',
