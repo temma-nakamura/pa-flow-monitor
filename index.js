@@ -51,6 +51,7 @@ function render(data) {
     let interval_label = '';
     let time_label = '';
     let weekly_label = '';
+    let result_label = '';
 
     if (flow.recurrence !== null) {
 
@@ -89,11 +90,9 @@ function render(data) {
                 Sunday: '日',
             };
 
-            const result = weekly_label
+            result_label = weekly_label
               .map(d => convertMap[d] ?? d)
               .join(',');
-
-            console.log(result);
 
         }
 
@@ -114,7 +113,7 @@ function render(data) {
         ${flow.state || "-"}
       </td>
       <td>${interval_label || "-"}</td>
-      <td>${weekly_label || "-"}</td>
+      <td>${result_label || "-"}</td>
       <td>${time || "-"}</td>
       <td>${min || "-"}</td>
     `;
