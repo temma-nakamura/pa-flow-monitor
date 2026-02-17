@@ -255,13 +255,14 @@ function sortBy(uiKey) {
 
 
   const sortKeyMap = {
-    name: 'flowName',
-    status: 'state',
-    interval: 'interval',
-    week: 'weekly',
-    hour: 'hour',
-    min: 'min'
+    name: 'flow_name',
+    status: 'flow_status',
+    interval: 'flow_interval',
+    week: 'flow_weekly',
+    hour: 'flow_hour',
+    min: 'flow_min'
   };
+
 
 
   const key = sortKeyMap[uiKey];
@@ -287,8 +288,8 @@ function sortBy(uiKey) {
     let v2 = b[key];
 
 
-    // JSON配列対応
-    if (key === 'weekly' || key === 'hour' || key === 'min') {
+    /* ===== JSON配列項目対応 ===== */
+    if (key === 'flow_weekly' || key === 'flow_hour' || key === 'flow_min') {
 
       v1 = parseJsonArray(v1).join(',');
       v2 = parseJsonArray(v2).join(',');
@@ -300,6 +301,7 @@ function sortBy(uiKey) {
     v2 = v2 ?? '';
 
 
+    /* ===== 文字列比較対応 ===== */
     if (typeof v1 === 'string') {
 
       v1 = v1.toLowerCase();
