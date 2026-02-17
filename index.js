@@ -115,6 +115,9 @@ function render(data) {
   };
 
 
+  console.log(data);
+
+
   data.forEach(flow => {
 
     const tr = document.createElement("tr");
