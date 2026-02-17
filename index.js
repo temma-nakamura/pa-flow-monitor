@@ -1,4 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+  document.querySelectorAll("th[data-sort]").forEach(th => {
+
+    th.addEventListener("click", () => {
+
+      const key = th.dataset.sort;
+
+      sortBy(key);
+
+    });
+
+  });
+
   loadFlowStatus();
 });
 
@@ -187,16 +200,17 @@ function statusClass(status) {
   switch (status) {
 
     case "Started":
-      return "status-active";
+      return "稼働中";
 
     case "Stopped":
-      return "status-error";
+      return "停止中";
 
     case "Suspended":
-      return "status-standby";
+      return "一時停止";
 
     default:
-      return "status-unknown";
+      return "不明";
+      
   }
 }
 
@@ -205,15 +219,31 @@ function statusClass(status) {
    ソート
 ================================ */
 
-function sortBy(key) {
+function sortBy(uiKey) {
 
-  if (currentSort.key === key) {
+
+  const sortKeyMap = {
+    name: 'flowName',
+    status: 'state',
+    interval: 'interval',
+    week: 'weekly',
+    hour: 'hour',
+    min: 'min'
+  };
+
+
+  const key = sortKeyMap[uiKey];
+
+  if (!key) return;
+
+
+  if (currentSort.key === uiKey) {
 
     currentSort.asc = !currentSort.asc;
 
   } else {
 
-    currentSort.key = key;
+    currentSort.key = uiKey;
     currentSort.asc = true;
 
   }
@@ -221,12 +251,29 @@ function sortBy(key) {
 
   flowData.sort((a, b) => {
 
-    let v1 = a[key] ?? '';
-    let v2 = b[key] ?? '';
+    let v1 = a[key];
+    let v2 = b[key];
 
 
-    if (typeof v1 === 'string') v1 = v1.toLowerCase();
-    if (typeof v2 === 'string') v2 = v2.toLowerCase();
+    // JSON配列対応
+    if (key === 'weekly' || key === 'hour' || key === 'min') {
+
+      v1 = parseJsonArray(v1).join(',');
+      v2 = parseJsonArray(v2).join(',');
+
+    }
+
+
+    v1 = v1 ?? '';
+    v2 = v2 ?? '';
+
+
+    if (typeof v1 === 'string') {
+
+      v1 = v1.toLowerCase();
+      v2 = v2.toLowerCase();
+
+    }
 
 
     if (v1 < v2) return currentSort.asc ? -1 : 1;
