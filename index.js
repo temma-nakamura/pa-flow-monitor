@@ -115,9 +115,6 @@ function render(data) {
   };
 
 
-  console.log(data);
-
-
   data.forEach(flow => {
 
     const tr = document.createElement("tr");
@@ -125,7 +122,7 @@ function render(data) {
 
     /* ===== 実行間隔 ===== */
 
-    let interval_label = flow.interval || '-';
+    let interval_label = flow.flow_interval || '-';
 
     switch (interval_label) {
 
@@ -149,7 +146,7 @@ function render(data) {
 
     /* ===== 曜日（JSON文字列対応） ===== */
 
-    const weeklyArr = parseJsonArray(flow.weekly);
+    const weeklyArr = parseJsonArray(flow.flow_weekly);
 
     const result_label = weeklyArr
       .map(d => convertMap[d] ?? d)
@@ -158,8 +155,8 @@ function render(data) {
 
     /* ===== 時刻（JSON文字列対応） ===== */
 
-    const hourArr = parseJsonArray(flow.hour);
-    const minArr  = parseJsonArray(flow.min);
+    const hourArr = parseJsonArray(flow.flow_hour);
+    const minArr  = parseJsonArray(flow.flow_min);
 
     const hour = hourArr[0] ?? '-';
     const min  = minArr[0] ?? '-';
@@ -167,14 +164,14 @@ function render(data) {
 
     /* ===== ステータス ===== */
 
-    const flow_status_label = statusClass(flow.state);
+    const flow_status_label = statusClass(flow.flow_status);
 
 
     tr.innerHTML = `
       <td>${escape(flow.flowName)}</td>
 
       <td class="${flow_status_label}">
-        ${statusLabel(flow.state)}
+        ${statusLabel(flow.flow_status)}
       </td>
 
       <td>${interval_label}</td>
