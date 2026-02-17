@@ -61,22 +61,24 @@ async function loadFlowStatus() {
 
 
 /* ===============================
-   JSON配列変換（今回の対応部分）
+   JSON配列変換
 ================================ */
 
 function parseJsonArray(str) {
 
   try {
 
-    return JSON.parse(str);
+    const data = JSON.parse(str);
+
+    return Array.isArray(data) ? data : [];
 
   } catch {
 
     return [];
 
   }
-}
 
+}
 
 /* ===============================
    描画
