@@ -168,7 +168,7 @@ function render(data) {
 
 
     tr.innerHTML = `
-      <td>${escape(flow.flowName)}</td>
+      <td>${escape(flow.flow_name)}</td>
 
       <td class="${flow_status_label}">
         ${statusLabel(flow.flow_status)}
