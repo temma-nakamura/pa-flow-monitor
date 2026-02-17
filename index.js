@@ -171,7 +171,7 @@ function render(data) {
       <td>${escape(flow.flowName)}</td>
 
       <td class="${flow_status_label}">
-        ${flow.state || "-"}
+        ${statusLabel(flow.state)}
       </td>
 
       <td>${interval_label}</td>
@@ -193,9 +193,7 @@ function render(data) {
    ステータスCSS
 ================================ */
 
-function statusClass(status) {
-
-  if (!status) return "status-unknown";
+function statusLabel(status) {
 
   switch (status) {
 
@@ -208,11 +206,45 @@ function statusClass(status) {
     case "Suspended":
       return "一時停止";
 
+    case "Running":
+      return "稼働中";
+
+    case "Failed":
+      return "エラー";
+
     default:
       return "不明";
-      
   }
+
 }
+
+
+
+function statusClass(status) {
+
+  if (!status) return "status-unknown";
+
+  switch (status) {
+
+    case "Started":
+    case "Running":
+      return "status-active";   // 緑
+
+    case "Suspended":
+      return "status-standby";  // 黄
+
+    case "Stopped":
+      return "status-error";    // 赤
+
+    case "Failed":
+      return "status-error";    // 赤
+
+    default:
+      return "status-unknown";  // グレー
+  }
+
+}
+
 
 
 /* ===============================
