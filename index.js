@@ -158,8 +158,8 @@ function render(data) {
     const hourArr = parseJsonArray(flow.flow_hour);
     const minArr  = parseJsonArray(flow.flow_min);
 
-    const hour = hourArr[0] ?? '-';
-    const min  = minArr[0] ?? '-';
+    const hour = hourArr.length ? hourArr.join(',') : '-';
+    const min  = minArr.length ? minArr.join(',') : '-';
 
 
     /* ===== ステータス ===== */
