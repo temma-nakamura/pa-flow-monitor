@@ -62,97 +62,75 @@ async function loadFlowStatus() {
 /* ===============================
    Render
 ================================ */
+function parseJsonArray(str) {
+  try {
+    return JSON.parse(str);
+  } catch {
+    return [];
+  }
+}
 
-function render(list) {
+function render(data) {
 
   const tbody = document.getElementById("flowList");
-
   tbody.innerHTML = "";
 
-  list.forEach(flow => {
+  const convertMap = {
+    Monday: '月',
+    Tuesday: '火',
+    Wednesday: '水',
+    Thursday: '木',
+    Friday: '金',
+    Saturday: '土',
+    Sunday: '日',
+  };
 
-    if (
-      flow.state === "Stopped" ||
-      flow.state === "Suspended"
-    ) return;
-
-
-    let interval = "-";
-    let week = "-";
-
-
-    if (flow.recurrence) {
-
-      switch (flow.recurrence.frequency) {
-
-        case "Week":
-          interval = "週";
-          break;
-
-        case "Day":
-          interval = "日";
-          break;
-
-        case "Month":
-          interval = flow.recurrence.interval + "ヶ月";
-          break;
-      }
-
-
-      const days =
-        flow?.recurrence?.schedule?.weekDays ?? [];
-
-      const map = {
-        Monday: "月",
-        Tuesday: "火",
-        Wednesday: "水",
-        Thursday: "木",
-        Friday: "金",
-        Saturday: "土",
-        Sunday: "日",
-      };
-
-      if (Array.isArray(days)) {
-
-        week = days
-          .map(d => map[d] ?? d)
-          .join(",");
-
-      }
-    }
-
-
-    const hour =
-      flow?.recurrence?.schedule?.hours ?? "-";
-
-    const min =
-      flow?.recurrence?.schedule?.minutes ?? "-";
-
-
-    const status = getStatus(flow.state);
-
+  data.forEach(flow => {
 
     const tr = document.createElement("tr");
 
+    /* ===== interval ===== */
+    let interval_label = flow.interval || '-';
+
+    if (interval_label === 'Week') {
+      interval_label = '曜日';
+    } else if (interval_label === 'Day') {
+      interval_label = '日';
+    } else if (interval_label === 'Month') {
+      interval_label = '月';
+    }
+
+    /* ===== weekly ===== */
+    let weeklyArr = parseJsonArray(flow.weekly);
+
+    let result_label = weeklyArr
+      .map(d => convertMap[d] ?? d)
+      .join(',');
+
+    /* ===== hour / min ===== */
+    const hourArr = parseJsonArray(flow.hour);
+    const minArr  = parseJsonArray(flow.min);
+
+    const hour = hourArr[0] ?? '-';
+    const min  = minArr[0] ?? '-';
+
+    /* ===== status ===== */
+    const flow_status_label = statusClass(flow.state);
+
     tr.innerHTML = `
-      <td>${escapeHtml(flow.flowName)}</td>
-
-      <td class="${status.class}">
-        ${status.label}
+      <td>${escape(flow.flowName)}</td>
+      <td class="${flow_status_label}">
+        ${flow.state || "-"}
       </td>
-
-      <td>${interval}</td>
-      <td>${week}</td>
+      <td>${interval_label}</td>
+      <td>${result_label || "-"}</td>
       <td>${hour}</td>
       <td>${min}</td>
     `;
 
     tbody.appendChild(tr);
-
   });
-
 }
-
 
 /* ===============================
    Status
